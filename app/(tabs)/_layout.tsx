@@ -1,6 +1,7 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../../src/theme';
+import { AppHeaderSettingsButton, AppHeaderTitle } from '../../src/components/AppHeader';
 
 export default function TabLayout() {
   return (
@@ -18,6 +19,8 @@ export default function TabLayout() {
         tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
         headerStyle: { backgroundColor: colors.surface },
         headerTintColor: colors.text,
+        headerTitle: ({ children }) => <AppHeaderTitle>{children}</AppHeaderTitle>,
+        headerRight: () => <AppHeaderSettingsButton />,
         headerTitleStyle: { fontWeight: '700' },
         headerShadowVisible: false,
       }}

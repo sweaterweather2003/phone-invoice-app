@@ -33,6 +33,11 @@ export function CompanyProvider({ children }: { children: React.ReactNode }) {
       setError(null);
       const list = await db.getCompanies();
       setCompanies(list || []);
+      (list || []).forEach((item) => {
+        void db.syncSharedBrandLogo(item.name, item.logo || null).catch((err) => {
+          console.warn('Shared brand logo sync error:', err?.message);
+        });
+      });
       const activeId = await db.getSetting('activeCompanyId');
       if (activeId) {
         const c = list?.find((x) => x.id === activeId) || list?.[0] || null;

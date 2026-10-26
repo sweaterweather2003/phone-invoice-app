@@ -226,6 +226,15 @@ export default function MoreScreen() {
       onPress: () => router.push('/company-select'),
       color: colors.accent,
     },
+    ...(company
+      ? [{
+          icon: 'settings-outline' as const,
+          label: 'Company Settings',
+          desc: 'Edit logo, tagline & contact details',
+          onPress: () => router.push({ pathname: '/company-create', params: { id: company.id } }),
+          color: colors.textSecondary,
+        }]
+      : []),
     {
       icon: 'add-circle-outline' as const,
       label: 'New Brand',

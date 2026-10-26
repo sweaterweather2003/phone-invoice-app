@@ -8,6 +8,7 @@ import {
   deleteDoc,
   query,
   orderBy,
+  runTransaction,
   setDoc,
   writeBatch,
 } from 'firebase/firestore';
@@ -66,6 +67,50 @@ export async function createCompany(data: Omit<Company, 'id' | 'createdAt'>): Pr
 export async function updateCompany(id: string, data: Partial<Company>) {
   const { id: _id, createdAt: _createdAt, ...changes } = data;
   await updateDoc(doc(getDbInstance(), 'users', uid(), 'companies', id), changes);
+}
+
+function publicBrandLogoId(name: string) {
+  const normalized = name.normalize('NFKC').trim().replace(/\s+/g, ' ').toLowerCase();
+  return normalized ? encodeURIComponent(normalized) : null;
+}
+
+export async function getSharedBrandLogo(name: string): Promise<string | null> {
+  const brandId = publicBrandLogoId(name);
+  if (!brandId) return null;
+
+  const snapshot = await getDoc(doc(getDbInstance(), 'publicBrandLogos', brandId));
+  if (!snapshot.exists()) return null;
+  const logoUrl = snapshot.data().logoUrl;
+  return typeof logoUrl === 'string' ? logoUrl : null;
+}
+
+export async function syncSharedBrandLogo(name: string, logoUrl: string | null) {
+  const brandId = publicBrandLogoId(name);
+  const brandName = name.normalize('NFKC').trim().replace(/\s+/g, ' ');
+  if (!brandId || !brandName) return;
+
+  const ownerUid = uid();
+  const brandRef = doc(getDbInstance(), 'publicBrandLogos', brandId);
+  await runTransaction(getDbInstance(), async (transaction) => {
+    const snapshot = await transaction.get(brandRef);
+    if (snapshot.exists() && snapshot.data().ownerUid !== ownerUid) return;
+
+    if (!logoUrl) {
+      if (snapshot.exists()) transaction.delete(brandRef);
+      return;
+    }
+
+    if (snapshot.exists() && snapshot.data().logoUrl === logoUrl && snapshot.data().brandName === brandName) {
+      return;
+    }
+
+    transaction.set(brandRef, {
+      brandName,
+      logoUrl,
+      ownerUid,
+      updatedAt: new Date().toISOString(),
+    });
+  });
 }
 
 // ─── Clients ────────────────────────────────────────────────

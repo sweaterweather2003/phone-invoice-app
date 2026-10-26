@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AuthProvider, useAuth } from '../src/hooks/useAuth';
 import { CompanyProvider } from '../src/hooks/useCompany';
+import { AppHeaderSettingsButton, AppHeaderTitle } from '../src/components/AppHeader';
 import { colors } from '../src/theme';
 
 function RootLayoutContent() {
@@ -34,6 +35,8 @@ function RootLayoutContent() {
         screenOptions={{
           headerStyle: { backgroundColor: colors.surface },
           headerTintColor: colors.text,
+          headerTitle: ({ children }) => <AppHeaderTitle>{children}</AppHeaderTitle>,
+          headerRight: () => <AppHeaderSettingsButton />,
           headerTitleStyle: { fontWeight: '700' },
           headerShadowVisible: false,
           contentStyle: { backgroundColor: colors.background },

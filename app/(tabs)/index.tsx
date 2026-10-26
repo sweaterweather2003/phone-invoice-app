@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import {
   View,
   Text,
+  Image,
   StyleSheet,
   TouchableOpacity,
   RefreshControl,
@@ -78,12 +79,19 @@ export default function DashboardScreen() {
     >
       {/* Header */}
       <View style={styles.header}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.greeting}>Workspace</Text>
-          <Text style={styles.companyName}>{company.name}</Text>
-          {company.tagline ? (
-            <Text style={styles.tagline}>{company.tagline}</Text>
-          ) : null}
+        <View style={styles.brandIdentity}>
+          {company.logo ? (
+            <Image source={{ uri: company.logo }} style={styles.companyLogo} resizeMode="contain" />
+          ) : (
+            <View style={styles.logoFallback}>
+              <Text style={styles.logoInitial}>{company.name.charAt(0).toUpperCase()}</Text>
+            </View>
+          )}
+          <View style={styles.brandDetails}>
+            <Text style={styles.greeting}>Workspace</Text>
+            <Text style={styles.companyName}>{company.name}</Text>
+            {company.tagline ? <Text style={styles.tagline}>{company.tagline}</Text> : null}
+          </View>
         </View>
         <TouchableOpacity
           style={styles.switchBtn}
@@ -209,10 +217,27 @@ const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.background },
   header: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     marginBottom: spacing.xl,
     marginTop: spacing.sm,
   },
+  brandIdentity: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  brandDetails: { flex: 1, minWidth: 0 },
+  companyLogo: {
+    width: 84,
+    height: 56,
+    borderRadius: radius.md,
+    backgroundColor: colors.surface,
+  },
+  logoFallback: {
+    width: 56,
+    height: 56,
+    borderRadius: radius.md,
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoInitial: { color: colors.textInverse, fontSize: 22, fontWeight: '700' },
   greeting: { ...typography.label, color: colors.textMuted },
   companyName: { ...typography.h1, color: colors.text, marginTop: 2 },
   tagline: { ...typography.caption, color: colors.textSecondary, marginTop: 2 },

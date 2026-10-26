@@ -39,7 +39,7 @@ export default function CompanySelectScreen() {
               >
                 <View style={styles.row}>
                   {c.logo ? (
-                    <Image source={{ uri: c.logo }} style={styles.logoImage} resizeMode="cover" />
+                    <Image source={{ uri: c.logo }} style={styles.logoImage} resizeMode="contain" />
                   ) : (
                     <View style={[styles.avatar, { backgroundColor: c.brandColor || colors.primary }]}>
                       <Text style={styles.avatarText}>{c.name.charAt(0).toUpperCase()}</Text>
@@ -81,9 +81,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   logoImage: {
-    width: 48,
+    width: 72,
     height: 48,
-    borderRadius: 24,
+    borderRadius: radius.sm,
     backgroundColor: colors.surface,
   },
   avatarText: { color: '#fff', fontWeight: '800', fontSize: 20 },

@@ -31,7 +31,13 @@
       "expo-router",
       "expo-sqlite",
       "expo-asset",
-      "expo-font"
+      "expo-font",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Invoicing Pro to select your company logo from your photo library."
+        }
+      ]
     ],
     "extra": {
       "router": {},

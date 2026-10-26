@@ -8,5 +8,25 @@ service cloud.firestore {
     match /users/{userId}/{document=**} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
+
+    match /publicBrandLogos/{brandId} {
+      function validBrandLogo() {
+        return request.resource.data.keys().hasOnly(['brandName', 'logoUrl', 'ownerUid', 'updatedAt'])
+          && request.resource.data.keys().hasAll(['brandName', 'logoUrl', 'ownerUid', 'updatedAt'])
+          && request.resource.data.brandName is string
+          && request.resource.data.logoUrl is string
+          && request.resource.data.logoUrl.matches('https://.*')
+          && request.resource.data.ownerUid == request.auth.uid
+          && request.resource.data.updatedAt is string;
+      }
+
+      allow get: if request.auth != null;
+      allow list: if false;
+      allow create: if request.auth != null && validBrandLogo();
+      allow update: if request.auth != null
+        && resource.data.ownerUid == request.auth.uid
+        && validBrandLogo();
+      allow delete: if request.auth != null && resource.data.ownerUid == request.auth.uid;
+    }
   }
 }
